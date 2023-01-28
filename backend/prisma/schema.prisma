@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  role      Role      @default(USER)
+  profile   Profile?
+  likes     Likes[]
+  reviews   Reviews[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([email])
+}
+
+model Profile {
+  id           String   @id @default(uuid())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String   @unique
+  lastName     String?
+  firstName    String?
+  emailUpdates Boolean? @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Likes {
+  id         String   @id @default(uuid())
+  likedBy    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  externalId String
+  rating     Int      @default(0)
+  isDeleted  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId, externalId])
+}
+
+model Reviews {
+  id         String   @id @default(uuid())
+  reviewedBy User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  externalId String
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId, externalId])
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  terms     Term[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Term {
+  id         String   @id @default(uuid())
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name       String
+  categoryId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([categoryId, name])
+  @@index([categoryId])
+  @@index([name])
+}
+
+enum Role {
+  USER
+  ADMIN
+}

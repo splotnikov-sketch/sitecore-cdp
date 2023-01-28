@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5433:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - backend-network
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=secret
+      - PGADMIN_LISTEN_PORT=80
+    ports:
+      - '5050:80'
+    networks:
+      - backend-network
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+  redis:
+    container_name: redis
+    image: redis:7.0.8-alpine
+    ports:
+      - '6379:6379'
+    networks:
+      - backend-network
+    volumes:
+      - redis-data:/data
+  swagger-editor:
+    container_name: swagger-editor
+    image: swaggerapi/swagger-editor
+    ports:
+      - 8044:8080
+    environment:
+      - SWAGGER_FILE=/src/utils/api/openapi.yml
+    volumes:
+      - ./src/utils/api:/config
+networks:
+  backend-network:
+    driver: bridge
+volumes:
+  db:
+    driver: local
+  pgadmin-data:
+  redis-data:
