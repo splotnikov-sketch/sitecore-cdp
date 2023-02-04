@@ -1,5 +1,6 @@
 import dbContext from '@root/db/dbContext'
 import logger from '@root/utils/logger'
+import { isNullOrEmpty } from '@root/utils/common'
 
 export interface ISearchTerm {
   term: string
@@ -57,6 +58,16 @@ export async function getCategory(terms: Array<ISearchTerm>): Promise<any> {
       category: true,
     },
   })
+
+  if (isNullOrEmpty(queryResult)) {
+    const noResult: ICategoryNum = {
+      category: '',
+      num: 0,
+    }
+    return new Promise((resolve, reject) => {
+      resolve(noResult)
+    })
+  }
 
   const termsWithCategory = queryResult.map((x) => {
     const withNum = terms.find((y) => y.term === x.name)
