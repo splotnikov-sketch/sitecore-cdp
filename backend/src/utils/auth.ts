@@ -69,9 +69,6 @@ export function verifyAuthToken(token: string): Promise<AuthResult> {
   return new Promise(function (resolve, reject) {
     jwt.verify(token, publicKey, verifyOptions, (err, decoded) => {
       if (err === null && !isNullOrEmpty(decoded)) {
-        logger.info(`decoded --->`)
-        logger.info(decoded)
-
         const decodedObj = decoded as {
           payload: { userId?: string; email: string; exp: number }
         }

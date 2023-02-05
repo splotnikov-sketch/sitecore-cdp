@@ -5,7 +5,7 @@ import config from '@root/config'
 import { createServer } from '@root/utils/api/server'
 import dbContext from '@root/db/dbContext'
 
-import * as mockUserActions from '@root/db/actions/userActions'
+import * as mockUserActions from '@root/actions/userActions'
 
 jest.mock('@root/db/actions/userActions')
 

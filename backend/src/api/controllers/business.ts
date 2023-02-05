@@ -11,6 +11,8 @@ import {
 import config from '@root/config'
 import { getCacheProvider } from '@root/utils/cache/utils'
 import logger from '@root/utils/logger'
+import { getById } from '@root/actions/businessActions'
+import { isErrorModel } from '@root/models/errorModel'
 
 const cacheProvider = getCacheProvider()
 
@@ -117,42 +119,13 @@ export async function getBusinessById(
   req: Request,
   res: Response
 ): Promise<void> {
-  try {
-    const id = req.params.id
-
-    try {
-      const cacheResult = await cacheProvider.get(id)
-      if (cacheResult) {
-        const result = JSON.parse(cacheResult)
-        writeJsonResponse(res, 200, result)
-        return
-      }
-    } catch (error) {
-      logger.warn(`getBusinessById.cache.get: ${error}`)
-    }
-
-    const response = await yelp.get(`/businesses/${id}`)
-
-    if (response.status === 200) {
-      const result = response.data
-
-      const mins15inSec = 60 * 15
-      await cacheProvider.set(id, JSON.stringify(result), mins15inSec)
-
-      writeJsonResponse(res, 200, result)
-
-      return
-    }
-
-    if (response.status === 404) {
-      writeResponse404(res)
-
-      return
-    }
-
+  const id = req.params.id
+  const result = await getById(id)
+  if (isErrorModel(result)) {
+    logger.error(`getBusinessById error: ${result.error}`)
     writeResponse500(res)
-  } catch (error) {
-    logger.error(`getBusinessById error: ${error}`)
-    writeResponse500(res)
+    return
   }
+
+  writeJsonResponse(res, 200, result)
 }

@@ -11,7 +11,7 @@
     "build": "npm run clean && npm run copy:prisma && npm run prisma:generate && tsc -p . && npm run copy:yml && npm run copy:jwt",
     "start": "cross-env NODE_ENV=production node -r tsconfig-paths/register ./dist/app.js",
     "start:prod": "cross-env ENV_FILE=./config/.env.production NODE_ENV=production node -r ts-node/register/transpile-only -r tsconfig-paths/register ./dist/app.js",
-    "dev": "cross-env NODE_ENV=development ts-node -r tsconfig-paths/register --files ./src/app.ts",
+    "dev": "cross-env NODE_ENV=development nodemon --exec \"ts-node -r tsconfig-paths/register\" --watch src src/app.ts ",
     "prod": "cross-env NODE_ENV=production ts-node -r tsconfig-paths/register --files ./src/app.ts",
     "test:unit": "cross-env ENV_FILE=./config/.env.test jest --verbose --silent=false",
     "test:coverage": "cross-env ENV_FILE=./config/.env.test jest --coverage",

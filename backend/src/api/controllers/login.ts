@@ -4,12 +4,12 @@ import {
   writeResponse500,
   writeResponseError,
 } from '@root/utils/api/expressHelpers'
-import { getUser } from '@root/db/actions/userActions'
+import { getUser } from '@root/actions/userActions'
 import { isNullOrEmpty } from '@root/utils/common'
 import { compareWithHash } from '@root/utils/common'
 import { createAuthToken } from '@root/utils/auth'
 import { ErrorModel, isErrorModel } from '@root/models/errorModel'
-import { isUserModel } from '@root/models/userModel'
+import { isUserModel } from '@root/models/prismaModels'
 
 export type LoginUserResponse =
   | ErrorModel

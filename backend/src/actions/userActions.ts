@@ -1,18 +1,14 @@
-import * as yup from 'yup'
 import logger from '@root/utils/logger'
 import { isNullOrEmpty } from '@root/utils/common'
 import dbContext from '@root/db/dbContext'
 import cacheLocal from '@root/utils/cache/CacheLocal'
 import { ErrorModel } from '@root/models/errorModel'
-import { UserModel } from '@root/models/userModel'
+import { UserModel } from '@root/models/prismaModels'
+import { object, string } from 'yup'
 
-const userSchema = yup.object().shape({
-  email: yup
-    .string()
-    .required('email is required')
-    .email('must be a valid email'),
-  password: yup
-    .string()
+const userSchema = object().shape({
+  email: string().required('email is required').email('must be a valid email'),
+  password: string()
     .required('password is required')
     .min(6, 'password must be at least 6 characters long'),
 })

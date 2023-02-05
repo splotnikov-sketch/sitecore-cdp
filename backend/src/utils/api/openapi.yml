@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
-  title: Sitecore CDP API
-  description: Sitecore CDP API
+  title: Sitecore CDP Playground API
+  description: Sitecore CDP Playground API
   termsOfService: http://swagger.io/terms/
   contact:
     email: splotnikov@gmail.com
@@ -15,11 +15,9 @@ externalDocs:
 servers:
   - url: /api/v1
   - url: http://localhost:3010/api/v1
-  - url: https://businesses-production-b978.up.railway.app/api/v1
     description: local
-tags:
-  - name: businesses
-    description: Businesses search APIs
+  - url: https://businesses-production-b978.up.railway.app/api/v1
+    description: cloud
 
 paths:
   /user:
@@ -71,6 +69,67 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FailResponse'
+  /user/review:
+    post:
+      summary: Create user review
+      tags:
+        - user
+      operationId: addReview
+      security:
+        - auth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - externalId
+                - content
+              properties:
+                externalId:
+                  type: string
+                content:
+                  type: string
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - reviewId
+                properties:
+                  reviewId:
+                    type: string
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        500:
+          $ref: '#/components/responses/ServerError'
+    get:
+      summary: Get the list of user reviews
+      tags:
+        - user
+      operationId: getReviews
+      security:
+        - auth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        500:
+          $ref: '#/components/responses/ServerError'
+
   /login:
     post:
       summary: Login
@@ -125,11 +184,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/FailResponse'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FailResponse'
+          $ref: '#/components/responses/ServerError'
   /location/search:
     post:
       summary: Location search
@@ -164,11 +219,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/FailResponse'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FailResponse'
+          $ref: '#/components/responses/ServerError'
   /cdp/browser/id:
     get:
       description: Returns browser id
@@ -189,6 +240,8 @@ paths:
                     type: string
                     description: CDP browser id.
                     example: 'd37ccbb9-5851-462b-b410-ca25011dbb45'
+        500:
+          $ref: '#/components/responses/ServerError'
   /cdp/event/identity:
     post:
       description: Create Identity event
@@ -233,11 +286,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreateEventResponse'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FailResponse'
+          $ref: '#/components/responses/ServerError'
   /cdp/event/view:
     post:
       description: Create View event
@@ -282,11 +331,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreateEventResponse'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FailResponse'
+          $ref: '#/components/responses/ServerError'
   /cdp/event/search:
     post:
       description: Create Search event
@@ -351,11 +396,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreateEventResponse'
         500:
-          description: Internal Server Error
+          $ref: '#/components/responses/ServerError'
+  /cdp/event/review:
+    post:
+      description: Create Review event
+      tags:
+        - cdp
+      operationId: createReviewEvent
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - channel
+                - browser_id
+                - externalId
+                - categories
+                - email
+              properties:
+                channel:
+                  type: string
+                browser_id:
+                  type: string
+                externalId:
+                  type: string
+                categories:
+                  type: string
+                email:
+                  type: string
+                  format: email
+      responses:
+        200:
+          description: Event id
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FailResponse'
+                $ref: '#/components/schemas/CreateEventResponse'
+        500:
+          $ref: '#/components/responses/ServerError'
   /cdp/session/kill:
     post:
       description: Kill session
@@ -389,11 +471,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreateEventResponse'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FailResponse'
+          $ref: '#/components/responses/ServerError'
   /cdp/offers:
     post:
       description: Retrieve the list of offers
@@ -427,11 +505,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Offer'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FailResponse'
+          $ref: '#/components/responses/ServerError'
   /category/preferred:
     post:
       description: Returns preferred category based on terms
@@ -601,6 +675,22 @@ components:
         text:
           type: string
           description: offer details
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+          description: review id
+        externalId:
+          type: string
+          description: id of external object user posted review for
+        content:
+          type: string
+          description: content of review
+        createdAt:
+          type: string
+          format: date-time
+          description: the date and time the review was created
     SearchTerm:
       type: object
       properties:
@@ -678,3 +768,22 @@ components:
           type: boolean
         error:
           type: string
+  responses:
+    ServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FailResponse'
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FailResponse'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FailResponse'

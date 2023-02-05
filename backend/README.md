@@ -77,3 +77,10 @@ mkdir config/jwt
 $ openssl genpkey -algorithm RSA -aes256 -out config/jwt/private.pem
 $ openssl rsa -in config/jwt/private.pem -pubout -outform PEM -out config/jwt/public.pem
 ```
+
+## Development
+
+- To change SQL structure modify /prisma/schema.prisma accordingly
+- Set DATABASE_URL environnement variable. ex: `$env:DATABASE_URL="postgres://admin:postgres@localhost:5433/dev"`
+- Execute `npx prisma migrate dev --name _some-description_`
+- Execute `npx prisma migrate dev`

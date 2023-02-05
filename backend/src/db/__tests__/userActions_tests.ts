@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker'
-import { insertUser, getUser } from '@root/db/actions/userActions'
+import { insertUser, getUser } from '@root/actions/userActions'
 import { compareWithHash } from '@root/utils/common'
 import dbContext from '@root/db/dbContext'
-import { UserModel } from '@root/models/userModel'
+import { UserModel } from '@root/models/prismaModels'
 
 beforeAll(async () => {
   await dbContext.connect()

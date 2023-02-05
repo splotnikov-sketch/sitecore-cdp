@@ -4,7 +4,7 @@ import {
   ISearchTerm,
   getCategory,
   isArrayOfSearchTerms,
-} from '@root/db/actions/categoryActions'
+} from '@root/actions/categoryActions'
 import {
   writeJsonResponse,
   writeResponse500,

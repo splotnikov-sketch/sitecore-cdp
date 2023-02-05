@@ -4,8 +4,8 @@ import { Express } from 'express-serve-static-core'
 import config from '@root/config'
 import { createServer } from '@root/utils/api/server'
 import dbContext from '@root/db/dbContext'
-import { insertUser } from '@root/db/actions/userActions'
-import { UserModel, isUserModel } from '@root/models/userModel'
+import { insertUser } from '@root/actions/userActions'
+import { UserModel, isUserModel } from '@root/models/prismaModels'
 import { ErrorModel, isErrorModel } from '@root/models/errorModel'
 
 let server: Express

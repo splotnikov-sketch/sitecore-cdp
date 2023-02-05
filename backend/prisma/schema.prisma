@@ -11,15 +11,16 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
+  id        String   @id @default(uuid())
+  email     String   @unique
   password  String
-  role      Role      @default(USER)
+  role      Role     @default(USER)
   profile   Profile?
-  likes     Likes[]
-  reviews   Reviews[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  likes     Like[]
+  reviews   Review[]
+  offers    Offer[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([email])
 }
@@ -35,7 +36,7 @@ model Profile {
   updatedAt    DateTime @updatedAt
 }
 
-model Likes {
+model Like {
   id         String   @id @default(uuid())
   likedBy    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
@@ -48,16 +49,31 @@ model Likes {
   @@index([userId, externalId])
 }
 
-model Reviews {
-  id         String   @id @default(uuid())
-  reviewedBy User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String
-  externalId String
-  content    String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model Review {
+  id                 String   @id @default(uuid())
+  reviewedBy         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             String
+  externalId         String
+  externalCategories String
+  content            String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@index([userId, externalId])
+}
+
+model Offer {
+  id        String   @id @default(uuid())
+  offerTo   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiredAt DateTime
+  usedAt    DateTime
+
+  @@index([userId])
 }
 
 model Category {

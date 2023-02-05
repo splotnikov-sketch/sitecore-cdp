@@ -4,7 +4,7 @@ import { Express } from 'express-serve-static-core'
 import config from '@root/config'
 import { createServer } from '@root/utils/api/server'
 import dbContext from '@root/db/dbContext'
-import { insertUser } from '@root/db/actions/userActions'
+import { insertUser } from '@root/actions/userActions'
 import { ErrorModel, isErrorModel } from '@root/models/errorModel'
 
 import * as mockAuth from '@root/utils/auth'
